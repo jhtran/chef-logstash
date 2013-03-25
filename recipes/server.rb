@@ -30,7 +30,6 @@ if Chef::Config[:solo]
   graphite_server_ip = node['logstash']['graphite_ip']
 else
   es_results = search(:node, node['logstash']['elasticsearch_query'])
-  graphite_results = search(:node, node['logstash']['graphite_query'])
 
   unless es_results.empty?
     es_server_ip = es_results[0]['ipaddress']
@@ -38,10 +37,15 @@ else
     es_server_ip = node['logstash']['elasticsearch_ip']
   end
 
-  unless graphite_results.empty?
-    graphite_server_ip = graphite_results[0]['ipaddress']
+  if node['logstash']['server']['install_graphite']
+    graphite_results = search(:node, node['logstash']['graphite_query'])
+    unless graphite_results.empty?
+      graphite_server_ip = graphite_results[0]['ipaddress']
+    else
+      graphite_server_ip = node['logstash']['graphite_ip']
+    end
   else
-    graphite_server_ip = node['logstash']['graphite_ip']
+    graphite_server_ip = nil
   end
 end
 

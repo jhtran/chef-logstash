@@ -10,10 +10,13 @@ version          "0.5.9"
   supports os
 end
 
-%w{ apache2 php build-essential git rbenv runit python java ant logrotate rabbitmq yumrepo }.each do |ckbk|
+%w{ apache2 php build-essential git rbenv runit python java ant logrotate rabbitmq }.each do |ckbk|
   depends ckbk
 end
 
-%w{ yumrepo apt }.each do |ckbk|
-  recommends ckbk
+if platform_family?("rhel")
+  depends yumrepo
+  %w{ yumrepo apt }.each do |ckbk|
+    recommends ckbk
+  end
 end
